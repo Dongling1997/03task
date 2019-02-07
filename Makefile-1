@@ -1,0 +1,18 @@
+all: dynamic static main_dynamic main_static
+
+dynamic: welcome.c
+	gcc -shared -fPIC welcome.c -o libwelcome.so
+
+static: welcome.c
+	gcc -c welcome.c
+	ar crv libwelcome.a welcome.o
+
+main_dynamic: main.c libwelcome.so
+	gcc main.c -o main_dyn.x -L. -lwelcome
+
+main_static: main.c libwelcome.a
+	gcc -o main_stat.x main.c libwelcome.a
+
+clean:
+	rm -f *.o *.x lib*
+
