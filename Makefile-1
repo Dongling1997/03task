@@ -2,15 +2,22 @@ CC=gcc
 
 all: dynamic static main_dynamic main_static
 
-dynamic: welcome.o
-	$(CC) -shared -fPIC welcome.o -o libwelcome.so
 
-static: welcome.c
-	$(CC) -c welcome.c
-	ar crv libwelcome.a welcome.o
+dynamic: welcome.o libwelcome.so
+
+libwelcome.so: welcome.o
+	$(CC) -shared -fPIC welcome.o -o libwelcome.so
 
 main_dynamic: main.c libwelcome.so
 	$(CC) main.c -o main_dyn.x -L. -lwelcome
+
+static: welcome.o libwelcome.a
+
+welcome.o: welcome.c
+	$(CC) -c -fPIC welcome.c
+
+libwelcome.a: welcome.o
+	ar crv libwelcome.a welcome.o
 
 main_static: main.c libwelcome.a
 	$(CC) -o main_stat.x main.c libwelcome.a
